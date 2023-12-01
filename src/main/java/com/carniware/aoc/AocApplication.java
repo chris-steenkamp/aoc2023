@@ -13,7 +13,8 @@ public class AocApplication {
 
 		var day = context.getBean(Go.class);
 
-		System.out.println(day.getResult());
+		System.out.println(day.getPart1Result());
+		System.out.println(day.getPart2Result());
 	}
 
 }
