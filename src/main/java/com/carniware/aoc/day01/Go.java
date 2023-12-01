@@ -49,6 +49,13 @@ public class Go {
         part2Results = processPart2Data();
     }
 
+    public Go(String[] inputs) {
+        input = List.of(inputs);
+
+        part1Results = processPart1Data();
+        part2Results = processPart2Data();
+    }
+
     public int getPart1Result() {
         return part1Results.stream().reduce(0, Integer::sum);
 
@@ -82,30 +89,35 @@ public class Go {
     }
 
     private List<Integer> processPart2Data() {
+        Pattern regex = Pattern
+                .compile("(one|1)|(two|2)|(three|3)|(four|4)|(five|5)|(six|6)|(seven|7)|(eight|8)|(nine|9)");
         var results = new ArrayList<Integer>();
 
-        for (var calibrationValue : input) {
-            results.add(processCalibration2(calibrationValue));
+        for (var calibrationInput : input) {
+            /*For two overlapping numbers (like twone), the regex will consume the letters t, w, o leaving only n,e remaining to be parsed.
+              This means that 21 will be interpreted as 22 (i.e. as if there was only a single digit in the input).
+              To get around this, we can replace all the letters of each number word with their numeric representation surrounded by their
+              first and last letters. This allows the number to be parsed correctly while ensuring any words that end before or start after
+              remain intact. i.e. twone becomes t2one (which is correct already) but will be further reduced to t2o1e, which yields the same.
+              The word twoneight becomes t2oneight -> t2o1eight -> t2o1e8t. Essentially only the last replacement can be ignored.
+            */
+            var matcher = regex.matcher(calibrationInput.replaceAll("one", "o1e").replaceAll("two", "t2o")
+                    .replaceAll("three", "t3e").replaceAll("four", "f4r").replaceAll("five", "f5e")
+                    .replaceAll("six", "s6x").replaceAll("seven", "s7n").replaceAll("eight", "e8t")
+                    .replaceAll("nine", "n9e"));
+
+            var currentValue = matcher.find() ? matcher.group() : 0;
+            int calibrationValue = values.get(currentValue) * 10;
+            while (matcher.find()) {
+                currentValue = matcher.group();
+            }
+
+            calibrationValue += values.get(currentValue);
+
+            results.add(calibrationValue);
         }
 
         return results;
 
-    }
-
-    private int processCalibration2(String value) {
-        Pattern regex = Pattern
-                .compile("(one|1)|(two|2)|(three|3)|(four|4)|(five|5)|(six|6)|(seven|7)|(eight|8)|(nine|9)");
-
-        var matcher = regex.matcher(value.replaceAll("one", "one1one").replaceAll("two", "two2two").replaceAll("three", "three3three").replaceAll("four", "four4four").replaceAll("five", "five5five").replaceAll("six", "six6six").replaceAll("seven", "seven7seven").replaceAll("eight", "eight8eight").replaceAll("nine", "nine9nine"));
-        
-        var currentValue = matcher.find() ? matcher.group() : 0;
-        int calibrationValue = values.get(currentValue) * 10;
-        while (matcher.find()) {
-            currentValue = matcher.group();
-        }
-
-        calibrationValue += values.get(currentValue);
-
-        return calibrationValue;
     }
 }
