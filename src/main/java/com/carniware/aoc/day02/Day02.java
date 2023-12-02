@@ -1,6 +1,7 @@
 package com.carniware.aoc.day02;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.carniware.aoc.common.AoCDay;
@@ -30,14 +31,17 @@ public class Day02 implements AoCDay {
         for (String line : input) {
             validGameIds += parseLine(line);
         }
-        ;
 
         return validGameIds;
-
     }
 
     public int getPart2Result() {
-        return 0;
+        int validGameIds = 0;
+        for (String line : input) {
+            validGameIds += parseLineV2(line);
+        }
+
+        return validGameIds;
     }
 
     private int parseLine(String line) {
@@ -49,12 +53,36 @@ public class Day02 implements AoCDay {
         return areAllSelectionsValid(selections) ? gameId : 0;
     }
 
+    private int parseLineV2(String line) {
+        var parts = line.split(":");
+
+        var gameId = parseGameId(parts[0]);
+        var selections = parseSelections(parts[1]);
+
+        return Arrays.stream(getMinimumCubes(selections)).reduce(1, (x, y) -> x * y);
+    }
+
     private Boolean areAllSelectionsValid(List<int[]> selections) {
         for (var set: selections) {
             if (set[0] == 0)
                 return false;
         }
         return true;
+    }
+
+    private int[] getMinimumCubes(List<int[]> selections) {
+        int[] results = new int[3];
+
+        for (var set: selections) {
+            if (set[1] > results[0])
+                results[0] = set[1]; // red (1)
+            if (set[2] > results[1])
+                results[1] = set[2]; // green (2)
+            if (set[3] > results[2])
+                results[2] = set[3]; // blue (3)
+        }
+
+        return results;
     }
 
     private List<int[]> parseSelections(String string) {
