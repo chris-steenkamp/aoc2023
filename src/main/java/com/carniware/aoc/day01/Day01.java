@@ -3,18 +3,14 @@ package com.carniware.aoc.day01;
 import static java.util.Map.entry;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.springframework.stereotype.Component;
-
+import com.carniware.aoc.common.AoCDay;
 import com.carniware.aoc.common.Helper;
 
-@Component
-public class Go {
+public class Day01 implements AoCDay {
     private static Map<String, Integer> values = Map.ofEntries(
             entry("1", 1),
             entry("2", 2),
@@ -38,18 +34,18 @@ public class Go {
     private List<Integer> part1Results;
     private List<Integer> part2Results;
 
-    public Go() {
+    public Day01() {
         this("src/main/java/com/carniware/aoc/day01/input.txt");
     }
 
-    public Go(String filename) {
+    public Day01(String filename) {
         input = Helper.readFile(filename);
 
         part1Results = processPart1Data();
         part2Results = processPart2Data();
     }
 
-    public Go(String[] inputs) {
+    public Day01(String[] inputs) {
         input = List.of(inputs);
 
         part1Results = processPart1Data();
