@@ -26,6 +26,14 @@ public class Day02 implements AoCDay {
         input = List.of(inputs);
     }
 
+    public void runPart1() {
+        System.out.println(getPart1Result());
+    }
+
+    public void runPart2() {
+        System.out.println(getPart2Result());
+    }
+
     public int getPart1Result() {
         int validGameIds = 0;
         for (String line : input) {

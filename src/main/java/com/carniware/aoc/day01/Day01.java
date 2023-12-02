@@ -52,6 +52,14 @@ public class Day01 implements AoCDay {
         part2Results = processPart2Data();
     }
 
+    public void runPart1() {
+        System.out.println(getPart1Result());
+    }
+
+    public void runPart2() {
+        System.out.println(getPart2Result());
+    }
+
     public int getPart1Result() {
         return part1Results.stream().reduce(0, Integer::sum);
 
