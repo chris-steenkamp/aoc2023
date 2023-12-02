@@ -4,13 +4,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
+
 import com.carniware.aoc.common.AoCDay;
 import com.carniware.aoc.common.Helper;
 
+@Component
+@Order(2)
 public class Day02 implements AoCDay {
     private List<String> input;
-    private List<Integer> part1Results;
-    private List<Integer> part2Results;
 
     private static int[] VALID_GAMES = { 12, 13, 14 };
 

@@ -2,9 +2,15 @@ package com.carniware.aoc.template;
 
 import java.util.List;
 
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
+
 import com.carniware.aoc.common.AoCDay;
 import com.carniware.aoc.common.Helper;
 
+@Component
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class DayN implements AoCDay {
     private List<String> input;
 

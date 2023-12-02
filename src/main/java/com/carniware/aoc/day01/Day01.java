@@ -7,9 +7,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
+
 import com.carniware.aoc.common.AoCDay;
 import com.carniware.aoc.common.Helper;
-
+@Component
+@Order(1)
 public class Day01 implements AoCDay {
     private static Map<String, Integer> values = Map.ofEntries(
             entry("1", 1),
