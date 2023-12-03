@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### AOC Input Files ###
+**/input*.txt
+**/sample*.txt
