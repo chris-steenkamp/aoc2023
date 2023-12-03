@@ -1,7 +1,9 @@
 package com.carniware.aoc.day03;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
@@ -16,7 +18,7 @@ import com.carniware.aoc.common.Helper;
 @Order(3)
 public class Day03 implements AoCDay {
     private List<String> input;
-    private List<List<Integer>> symbolPositions;
+    private List<Set<Integer>> symbolPositions;
 
     public Day03() {
         this("src/main/java/com/carniware/aoc/day03/input.txt");
@@ -61,7 +63,7 @@ public class Day03 implements AoCDay {
         Matcher m = symbols.matcher("");
         for (var line : input) {
             m.reset(line);
-            ArrayList<Integer> symbolPosition = new ArrayList<>();
+            Set<Integer> symbolPosition = new HashSet<>();
             while (m.find()) {
                 symbolPosition.add(m.start());
             }
