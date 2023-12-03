@@ -67,7 +67,6 @@ public class Day02 implements AoCDay {
     private int parseLineV2(String line) {
         var parts = line.split(":");
 
-        var gameId = parseGameId(parts[0]);
         var selections = parseSelections(parts[1]);
 
         return Arrays.stream(getMinimumCubes(selections)).reduce(1, (x, y) -> x * y);
