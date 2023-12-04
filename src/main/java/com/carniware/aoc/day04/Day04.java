@@ -1,12 +1,12 @@
 package com.carniware.aoc.day04;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -20,6 +20,8 @@ public class Day04 implements AoCDay {
     private List<String> input;
     private int part1Result;
     private int part2Result;
+    private List<Integer> extraCardsWon;
+    private Map<Integer, Integer> mem;
 
     public Day04() {
         this("src/main/java/com/carniware/aoc/day04/input.txt");
@@ -42,8 +44,9 @@ public class Day04 implements AoCDay {
     private void calculate() {
         part1Result = 0;
         part2Result = 0;
+        mem = new ConcurrentHashMap<>();
 
-        List<Integer> extraCardsWon = new ArrayList<>();
+        extraCardsWon = new ArrayList<>();
 
         for (var line : input) {
             var numbers = line.split(":")[1].split("\\|");
@@ -66,25 +69,30 @@ public class Day04 implements AoCDay {
             part1Result += Math.pow(2, winningNumbers.size() - 1);
         }
 
-        int[] cardTotalCounts = new int[input.size()];
-
-        Deque<Integer> stack = new ArrayDeque<>();
-
         for (int scratchCard = 0; scratchCard < input.size(); ++scratchCard) {
-            stack.addFirst(scratchCard);
-            while (stack.size() > 0) {
-                var extraScratchCard = stack.removeFirst();
+            part2Result += get_result(scratchCard);
+        }
+    }
 
-                cardTotalCounts[extraScratchCard]++;
-                int cardsAdded = extraScratchCard + 1 + extraCardsWon.get(extraScratchCard);
-                for (int i = extraScratchCard + 1; i < cardsAdded && i < cardTotalCounts.length; ++i) {
-                    //only add the next card if it won't go past the end of the list.
-                    stack.addFirst(i);
-                }
-            }
+    private int get_result(int scratchCard) {
+        int cardsWon = extraCardsWon.get(scratchCard);
+
+        if (cardsWon < 1){
+            return 1;
+        }
+        if (mem.containsKey(scratchCard)) {
+            return mem.get(scratchCard);
         }
 
-        part2Result = Arrays.stream(cardTotalCounts).reduce(0, (t, u) -> t + u);
+        int result = 1;
+        int cardsAdded = scratchCard + cardsWon;
+
+        for (int i = cardsAdded; i > scratchCard; --i) {
+            result += get_result(i);
+        }
+
+        mem.put(scratchCard, result);
+        return result;
     }
 
     public void runPart1() {
