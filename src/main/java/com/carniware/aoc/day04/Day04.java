@@ -11,15 +11,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import com.carniware.aoc.common.AoCDay;
-import com.carniware.aoc.common.Helper;
+import com.carniware.aoc.common.AoCDayAbstract;
 
 @Component
 @Order(4)
-public class Day04 implements AoCDay {
-    private List<String> input;
-    private int part1Result;
-    private int part2Result;
+public class Day04 extends AoCDayAbstract {
     private List<Integer> extraCardsWon;
     private Map<Integer, Integer> mem;
 
@@ -28,17 +24,8 @@ public class Day04 implements AoCDay {
     }
 
     public Day04(String filename) {
-        input = Helper.readFile(filename);
-
+        super(filename);
         calculate();
-    }
-
-    public int getPart1Result() {
-        return part1Result;
-    }
-
-    public int getPart2Result() {
-        return part2Result;
     }
 
     private void calculate() {
@@ -93,13 +80,5 @@ public class Day04 implements AoCDay {
 
         mem.put(scratchCard, result);
         return result;
-    }
-
-    public void runPart1() {
-        System.out.println(String.format("%s part 1 answer: %d", this.getClass().getSimpleName(), part1Result));
-    }
-
-    public void runPart2() {
-        System.out.println(String.format("%s part 2 answer: %d", this.getClass().getSimpleName(), part2Result));
     }
 }
