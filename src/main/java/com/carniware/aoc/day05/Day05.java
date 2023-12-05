@@ -19,15 +19,15 @@ public class Day05 extends AoCDayAbstract {
     private Map<String, List<List<Long>>> maps;
 
     public Day05() {
-        this("src/main/java/com/carniware/aoc/day05/input.txt");
+        this("src/main/java/com/carniware/aoc/day05/input.txt", false);
     }
 
-    public Day05(String filename) {
+    public Day05(String filename, Boolean runPart2) {
         super(filename);
-        calculate();
+        calculate(runPart2);
     }
 
-    private void calculate() {
+    private void calculate(Boolean runPart2) {
         maps = new LinkedHashMap<>();
         var sectionName = "seeds";
 
@@ -60,18 +60,20 @@ public class Day05 extends AoCDayAbstract {
                 .min(Long::compareTo)
                 .get();
 
-        part2Result = Long.MAX_VALUE;
+        if (runPart2) {
+            part2Result = Long.MAX_VALUE;
 
-        //brute force that shit!
-        IntStream.range(0, seeds.size() / 2).parallel().forEach(i -> {
-            var min = LongStream.range(seeds.get(i * 2), seeds.get(i * 2) + seeds.get((i * 2) + 1))
-                    .map(x -> translate(x))
-                    .boxed()
-                    .min(Long::compareTo)
-                    .get();
+            // brute force that shit!
+            IntStream.range(0, seeds.size() / 2).parallel().forEach(i -> {
+                var min = LongStream.range(seeds.get(i * 2), seeds.get(i * 2) + seeds.get((i * 2) + 1))
+                        .map(x -> translate(x))
+                        .boxed()
+                        .min(Long::compareTo)
+                        .get();
 
-            part2Result = Long.min(part2Result, min);
-        });
+                part2Result = Long.min(part2Result, min);
+            });
+        }
     }
 
     private long translate(long initialValue) {
