@@ -2,10 +2,10 @@ package com.carniware.aoc.common;
 
 import java.util.List;
 
-public abstract class AoCDayAbstract {
+public abstract class AoCDayAbstract implements AoCDay {
     protected List<String> input;
-    protected int part1Result;
-    protected int part2Result;
+    protected long part1Result;
+    protected long part2Result;
 
     public AoCDayAbstract(String filename) {
         input = Helper.readFile(filename);
@@ -15,11 +15,11 @@ public abstract class AoCDayAbstract {
         input = List.of(inputs);
     }
 
-    public int getPart1Result() {
+    public long getPart1Result() {
         return part1Result;
     }
 
-    public int getPart2Result() {
+    public long getPart2Result() {
         return part2Result;
     }
 

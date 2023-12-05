@@ -1,6 +1,7 @@
 package com.carniware.aoc.common;
 
 public interface AoCDay {
-    void runPart1();
-    void runPart2();
+    void displayPart1();
+
+    void displayPart2();
 }
