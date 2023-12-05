@@ -7,14 +7,11 @@ import java.util.List;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import com.carniware.aoc.common.AoCDay;
-import com.carniware.aoc.common.Helper;
+import com.carniware.aoc.common.AoCDayAbstract;
 
 @Component
 @Order(2)
-public class Day02 implements AoCDay {
-    private List<String> input;
-
+public class Day02 extends AoCDayAbstract {
     private static int[] VALID_GAMES = { 12, 13, 14 };
 
     public Day02() {
@@ -22,37 +19,23 @@ public class Day02 implements AoCDay {
     }
 
     public Day02(String filename) {
-        input = Helper.readFile(filename);
+        super(filename);
+        calculate();
     }
 
     public Day02(String[] inputs) {
-        input = List.of(inputs);
+        super(inputs);
+        calculate();
     }
 
-    public void runPart1() {
-        System.out.println(getPart1Result());
-    }
+    private void calculate() {
+        part1Result = 0;
+        part2Result = 0;
 
-    public void runPart2() {
-        System.out.println(getPart2Result());
-    }
-
-    public int getPart1Result() {
-        int validGameIds = 0;
         for (String line : input) {
-            validGameIds += parseLine(line);
+            part1Result += parseLine(line);
+            part2Result += parseLineV2(line);
         }
-
-        return validGameIds;
-    }
-
-    public int getPart2Result() {
-        int validGameIds = 0;
-        for (String line : input) {
-            validGameIds += parseLineV2(line);
-        }
-
-        return validGameIds;
     }
 
     private int parseLine(String line) {
