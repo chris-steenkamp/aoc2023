@@ -10,11 +10,10 @@ import java.util.regex.Pattern;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import com.carniware.aoc.common.AoCDay;
-import com.carniware.aoc.common.Helper;
+import com.carniware.aoc.common.AoCDayAbstract;
 @Component
 @Order(1)
-public class Day01 implements AoCDay {
+public class Day01 extends AoCDayAbstract {
     private static Map<String, Integer> values = Map.ofEntries(
             entry("1", 1),
             entry("2", 2),
@@ -34,7 +33,6 @@ public class Day01 implements AoCDay {
             entry("seven", 7),
             entry("eight", 8),
             entry("nine", 9));
-    private List<String> input;
     private List<Integer> part1Results;
     private List<Integer> part2Results;
 
@@ -43,34 +41,18 @@ public class Day01 implements AoCDay {
     }
 
     public Day01(String filename) {
-        input = Helper.readFile(filename);
-
-        part1Results = processPart1Data();
-        part2Results = processPart2Data();
+        super(filename);
+        calculate();
     }
 
     public Day01(String[] inputs) {
-        input = List.of(inputs);
-
-        part1Results = processPart1Data();
-        part2Results = processPart2Data();
+        super(inputs);
+        calculate();
     }
 
-    public void runPart1() {
-        System.out.println(getPart1Result());
-    }
-
-    public void runPart2() {
-        System.out.println(getPart2Result());
-    }
-
-    public int getPart1Result() {
-        return part1Results.stream().reduce(0, Integer::sum);
-
-    }
-
-    public int getPart2Result() {
-        return part2Results.stream().reduce(0, Integer::sum);
+    private void calculate() {
+        part1Result = processPart1Data().stream().reduce(0, Integer::sum);
+        part2Result = processPart2Data().stream().reduce(0, Integer::sum);
     }
 
     private List<Integer> processPart1Data() {
