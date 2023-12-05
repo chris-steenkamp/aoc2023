@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -57,6 +59,19 @@ public class Day05 extends AoCDayAbstract {
                 .map(x -> translate(x))
                 .min(Long::compareTo)
                 .get();
+
+        part2Result = Long.MAX_VALUE;
+
+        //brute force that shit!
+        IntStream.range(0, seeds.size() / 2).parallel().forEach(i -> {
+            var min = LongStream.range(seeds.get(i * 2), seeds.get(i * 2) + seeds.get((i * 2) + 1))
+                    .map(x -> translate(x))
+                    .boxed()
+                    .min(Long::compareTo)
+                    .get();
+
+            part2Result = Long.min(part2Result, min);
+        });
     }
 
     private long translate(long initialValue) {
