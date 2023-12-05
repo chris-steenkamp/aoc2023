@@ -33,8 +33,6 @@ public class Day01 extends AoCDayAbstract {
             entry("seven", 7),
             entry("eight", 8),
             entry("nine", 9));
-    private List<Integer> part1Results;
-    private List<Integer> part2Results;
 
     public Day01() {
         this("src/main/java/com/carniware/aoc/day01/input.txt");
@@ -51,8 +49,8 @@ public class Day01 extends AoCDayAbstract {
     }
 
     private void calculate() {
-        part1Result = processPart1Data().stream().reduce(0, Integer::sum);
-        part2Result = processPart2Data().stream().reduce(0, Integer::sum);
+        part1Result = processPart1Data().stream().reduce(0, (t, u) -> t + u);
+        part2Result = processPart2Data().stream().reduce(0, (t, u) -> t + u);
     }
 
     private List<Integer> processPart1Data() {
