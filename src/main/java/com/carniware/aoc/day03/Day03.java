@@ -13,42 +13,22 @@ import java.util.stream.IntStream;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import com.carniware.aoc.common.AoCDay;
-import com.carniware.aoc.common.Helper;
+import com.carniware.aoc.common.AoCDayAbstract;
 
 @Component
 @Order(3)
-public class Day03 implements AoCDay {
-    private List<String> input;
+public class Day03 extends AoCDayAbstract {
     private List<Set<Integer>> symbolPositions;
     private List<Map<Integer, Set<Integer>>> potentialGears;
-    private int part1Result;
-    private int part2Result;
 
     public Day03() {
         this("src/main/java/com/carniware/aoc/day03/input.txt");
     }
 
     public Day03(String filename) {
-        input = Helper.readFile(filename);
+        super(filename);
         findSymbols();
         calculate();
-    }
-
-    public int getPart1Result() {
-        return part1Result;
-    }
-
-    public int getPart2Result() {
-        return part2Result;
-    }
-
-    public void runPart1() {
-        System.out.println(part1Result);
-    }
-
-    public void runPart2() {
-        System.out.println(part2Result);
     }
 
     private void findSymbols() {
