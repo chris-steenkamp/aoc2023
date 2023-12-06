@@ -42,33 +42,32 @@ public class Day06 extends AoCDayAbstract {
                 .map(x -> Integer.parseInt(x))
                 .toList();
 
-        List<Integer> winners = new ArrayList<>(Collections.nCopies(times.size(), 0));
+        List<Long> winners = new ArrayList<>(Collections.nCopies(times.size(), 0l));
 
         IntStream.range(0, times.size()).parallel().forEach(x -> {
-            var raceTime = times.get(x);
-            for (var i = 0; i < raceTime; ++i) {
-                var distanceTravelled = (raceTime - i) * i;
-
-                if (distanceTravelled > distances.get(x)) {
-                    winners.set(x, winners.get(x) + 1);
-                }
-
-            }
+            winners.set(x, getDistanceTravelled(times.get(x), distances.get(x)));
         });
 
-        part1Result = winners.stream().reduce(1, (t, u) -> t * u);
+        part1Result = winners.stream().reduce(1l, (t, u) -> t * u);
 
         part2Result = 0;
 
         var raceTime = Integer.parseInt(input.get(0).replace("Time:", "").replace(" ", ""));
         var maxDistance = Long.parseLong(input.get(1).replace("Distance:", "").replace(" ", ""));
-        for (long i = 0; i < raceTime; ++i) {
+
+        part2Result = getDistanceTravelled(raceTime, maxDistance);
+    }
+
+    private long getDistanceTravelled(long raceTime, long maxDistance) {
+        long result = 0;
+        for (long i = 1; i < raceTime-1; ++i) {
             long distanceTravelled = (raceTime - i) * i;
 
             if (distanceTravelled > maxDistance) {
-                part2Result += 1;
+                result += 1;
             }
 
         }
+        return result;
     }
 }
