@@ -15,7 +15,7 @@ import com.carniware.aoc.common.AoCDayAbstract;
 @Order(6)
 public class Day06 extends AoCDayAbstract {
     public Day06() {
-        this("src/main/java/com/carniware/aoc/day06/sample.txt");
+        this("src/main/java/com/carniware/aoc/day06/input.txt");
     }
 
     public Day06(String filename) {
@@ -49,14 +49,26 @@ public class Day06 extends AoCDayAbstract {
             for (var i = 0; i < raceTime; ++i) {
                 var distanceTravelled = (raceTime - i) * i;
 
-
                 if (distanceTravelled > distances.get(x)) {
-                    winners.set(x, winners.get(x)+1);
+                    winners.set(x, winners.get(x) + 1);
                 }
-                
+
             }
         });
 
         part1Result = winners.stream().reduce(1, (t, u) -> t * u);
+
+        part2Result = 0;
+
+        var raceTime = Integer.parseInt(input.get(0).replace("Time:", "").replace(" ", ""));
+        var maxDistance = Long.parseLong(input.get(1).replace("Distance:", "").replace(" ", ""));
+        for (long i = 0; i < raceTime; ++i) {
+            long distanceTravelled = (raceTime - i) * i;
+
+            if (distanceTravelled > maxDistance) {
+                part2Result += 1;
+            }
+
+        }
     }
 }
