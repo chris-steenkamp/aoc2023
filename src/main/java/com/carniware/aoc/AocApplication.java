@@ -7,7 +7,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.carniware.aoc.common.AoCDayAbstract;
+import com.carniware.aoc.common.AoCDay;
 
 @SpringBootApplication
 public class AocApplication implements CommandLineRunner {
@@ -16,7 +16,7 @@ public class AocApplication implements CommandLineRunner {
 	}
 
     @Autowired
-    private List<AoCDayAbstract> daysImplemented;
+    private List<AoCDay> daysImplemented;
 
     @Override
     public void run(String... args) throws Exception {
