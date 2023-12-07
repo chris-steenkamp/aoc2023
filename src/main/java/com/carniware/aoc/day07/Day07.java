@@ -35,18 +35,27 @@ public class Day07 extends AoCDayAbstract {
         private int[] faceValues;
         private int bid;
         private String rawData;
+        private Boolean containsJoker;
 
         Hand(String input, int bid) {
+            this(input, bid, false);
+        }
+
+        Hand(String input, int bid, Boolean includeJoker) {
             counter = new LinkedHashMap<>();
             faceValues = new int[input.length()];
             this.bid = bid;
             rawData = input;
-
+            this.containsJoker = false;
             Arrays.fill(faceValues, 0);
             int index = 0;
             for (char c : input.toCharArray()) {
                 counter.put(c, counter.getOrDefault(c, 0) + 1);
                 faceValues[index++] = cardValues.get(c);
+                if (includeJoker && c == 'J') {
+                    this.containsJoker = true;
+                    faceValues[index - 1] = 0;
+                }
             }
         }
 
@@ -67,23 +76,25 @@ public class Day07 extends AoCDayAbstract {
         }
 
         public int getRank() {
-            switch (counter.size()) {
-                case 1:
-                    return 6;
-                case 2:
-                    if (counter.values().contains(1) || counter.values().contains(4))
-                        return 5;
-                    else
-                        return 4;
-                case 3:
-                    if (counter.values().contains(3) || counter.values().contains(4))
-                        return 3;
-                    else
-                        return 2;
-                case 4:
-                    return 1;
-                case 5:
-                    return 0;
+            if (!containsJoker) {
+                switch (counter.size()) {
+                    case 1:
+                        return 6;
+                    case 2:
+                        if (counter.values().contains(1) || counter.values().contains(4))
+                            return 5;
+                        else
+                            return 4;
+                    case 3:
+                        if (counter.values().contains(3) || counter.values().contains(4))
+                            return 3;
+                        else
+                            return 2;
+                    case 4:
+                        return 1;
+                    case 5:
+                        return 0;
+                }
             }
 
             return -1;
