@@ -23,14 +23,16 @@ public class Day09 extends AoCDayAbstract {
 
     private void calculate() {
         List<Long> nextValues = new ArrayList<>();
+        List<Long> previousValues = new ArrayList<>();
         for (var inputs : input) {
             List<Long> numbers = Arrays.stream(inputs.split(" ")).map(Long::parseLong).toList();
 
-            nextValues.add(numbers.getLast() + predictNext(numbers));
-
+            nextValues.add(predictNext(numbers));
+            previousValues.add(predictPrevious(numbers));
         }
 
         part1Result = nextValues.stream().reduce(Long::sum).get();
+        part2Result = previousValues.stream().reduce(Long::sum).get();
     }
 
     private Long predictNext(List<Long> numbers) {
@@ -52,6 +54,26 @@ public class Day09 extends AoCDayAbstract {
             prediction += diffs.get(i).getLast();
         }
 
-        return prediction;
+        return numbers.getLast() + prediction;
+    }
+
+    private Long predictPrevious(List<Long> numbers) {
+        List<List<Long>> diffs = new ArrayList<>();
+        List<Long> currentList = numbers;
+        do {
+            List<Long> diff = new ArrayList<>();
+            for (var i = 0; i < currentList.size() - 1; i++) {
+                diff.add(currentList.get(i + 1) - currentList.get(i));
+            }
+            diffs.add(diff);
+            currentList = diff;
+        } while (!currentList.stream().allMatch(x -> x == 0));
+
+        long prediction = 0;
+        for (var i = diffs.size() - 2; i >= 0; --i) {
+            prediction = diffs.get(i).getFirst() - prediction;
+        }
+
+        return numbers.getFirst() - prediction;
     }
 }
