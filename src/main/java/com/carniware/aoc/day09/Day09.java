@@ -26,16 +26,17 @@ public class Day09 extends AoCDayAbstract {
         List<Long> previousValues = new ArrayList<>();
         for (var inputs : input) {
             List<Long> numbers = Arrays.stream(inputs.split(" ")).map(Long::parseLong).toList();
+            var diffs = getDifferenceLists(numbers);
 
-            nextValues.add(predictNext(numbers));
-            previousValues.add(predictPrevious(numbers));
+            nextValues.add(predictNext(numbers, diffs));
+            previousValues.add(predictPrevious(numbers, diffs));
         }
 
         part1Result = nextValues.stream().reduce(Long::sum).get();
         part2Result = previousValues.stream().reduce(Long::sum).get();
     }
 
-    private Long predictNext(List<Long> numbers) {
+    private List<List<Long>> getDifferenceLists(List<Long> numbers) {
         List<List<Long>> diffs = new ArrayList<>();
         List<Long> currentList = numbers;
         do {
@@ -47,6 +48,10 @@ public class Day09 extends AoCDayAbstract {
             currentList = diff;
         } while (!currentList.stream().allMatch(x -> x == 0));
 
+        return diffs;
+    }
+
+    private Long predictNext(List<Long> numbers, List<List<Long>> diffs) {
         long prediction = 0;
         // we can skip the list of only zeroes and start with the last
         // value of the second last list of numbers.
@@ -57,18 +62,7 @@ public class Day09 extends AoCDayAbstract {
         return numbers.getLast() + prediction;
     }
 
-    private Long predictPrevious(List<Long> numbers) {
-        List<List<Long>> diffs = new ArrayList<>();
-        List<Long> currentList = numbers;
-        do {
-            List<Long> diff = new ArrayList<>();
-            for (var i = 0; i < currentList.size() - 1; i++) {
-                diff.add(currentList.get(i + 1) - currentList.get(i));
-            }
-            diffs.add(diff);
-            currentList = diff;
-        } while (!currentList.stream().allMatch(x -> x == 0));
-
+    private Long predictPrevious(List<Long> numbers, List<List<Long>> diffs) {
         long prediction = 0;
         for (var i = diffs.size() - 2; i >= 0; --i) {
             prediction = diffs.get(i).getFirst() - prediction;
