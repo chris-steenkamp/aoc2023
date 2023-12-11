@@ -16,21 +16,21 @@ import com.carniware.aoc.common.AoCDayAbstract;
 @Order(11)
 public class Day11 extends AoCDayAbstract {
 
-    record Point(int x, int y) {
+    record Point(long x, long y) {
     };
 
     public Day11() {
-        this("src/main/java/com/carniware/aoc/day11/sample.txt");
+        this("src/main/java/com/carniware/aoc/day11/sample.txt", 1);
     }
 
-    public Day11(String filename) {
+    public Day11(String filename, int scaleFactor) {
         super(filename);
-        calculate();
+        calculate(scaleFactor);
     }
 
-    private void calculate() {
-        List<Point> galaxies = getExpandedInput();
-        List<Integer> distances = new ArrayList<>();
+    private void calculate(int scaleFactor) {
+        List<Point> galaxies = getExpandedInput(scaleFactor);
+        List<Long> distances = new ArrayList<>();
 
         for (var i = 0; i < galaxies.size() - 1; ++i) {
             for (var j = i + 1; j < galaxies.size(); ++j) {
@@ -38,15 +38,15 @@ public class Day11 extends AoCDayAbstract {
             }
         }
 
-        part1Result = distances.stream().reduce(Integer::sum).get();
+        part1Result = distances.stream().reduce(Long::sum).get();
         // part1Result = 0;
     }
 
-    private int getManhattanDistance(Point p1, Point p2) {
+    private long getManhattanDistance(Point p1, Point p2) {
         return Math.abs(p1.x - p2.x) + Math.abs(p1.y - p2.y);
     }
 
-    private List<Point> getExpandedInput() {
+    private List<Point> getExpandedInput(int scaleFactor) {
         List<String> expanded = new ArrayList<>();
         List<Point> galaxies = new ArrayList<>();
         // Start by assuming all columns are empty, we will then remove any that contain
@@ -82,6 +82,8 @@ public class Day11 extends AoCDayAbstract {
 
         char[] emptyRow = new char[newRowLength];
         Arrays.fill(emptyRow, '.');
+
+        long yOffset = 0;
 
         for (var i = 0; i < input.size(); ++i) {
             StringBuilder sb = new StringBuilder(input.get(i));
