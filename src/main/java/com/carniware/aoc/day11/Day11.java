@@ -91,17 +91,17 @@ public class Day11 extends AoCDayAbstract {
             for (var newCol : emptyColumns) {
                 sb.insert((offset++) + newCol, '.');
             }
-            expanded.add(sb.toString());
+            var expandedRow = sb.toString();
+            expanded.add(expandedRow);
 
             if (emptyRows.contains(i)) {
                 expanded.add(String.valueOf(emptyRow));
+                yOffset += 1;
             }
-        }
 
-        for (int y = 0; y < expanded.size(); ++y) {
-            for (var x = 0; x < expanded.get(y).length(); ++x) {
-                if (expanded.get(y).charAt(x) == '#') {
-                    galaxies.add(new Point(x + 1, y + 1));
+            for (var x = 0; x < expandedRow.length(); ++x) {
+                if (expandedRow.charAt(x) == '#') {
+                    galaxies.add(new Point(x, i + yOffset));
                 }
             }
         }
