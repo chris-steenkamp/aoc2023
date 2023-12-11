@@ -20,7 +20,7 @@ public class Day11 extends AoCDayAbstract {
     };
 
     public Day11() {
-        this("src/main/java/com/carniware/aoc/day11/sample.txt", 1);
+        this("src/main/java/com/carniware/aoc/day11/sample.txt", 10);
     }
 
     public Day11(String filename, int scaleFactor) {
@@ -39,7 +39,7 @@ public class Day11 extends AoCDayAbstract {
         }
 
         part1Result = distances.stream().reduce(Long::sum).get();
-        // part1Result = 0;
+        part2Result = distances.stream().reduce(Long::sum).get();
     }
 
     private long getManhattanDistance(Point p1, Point p2) {
@@ -49,6 +49,7 @@ public class Day11 extends AoCDayAbstract {
     private List<Point> getExpandedInput(int scaleFactor) {
         List<String> expanded = new ArrayList<>();
         List<Point> galaxies = new ArrayList<>();
+        scaleFactor = Math.max(1, scaleFactor-1);
         // Start by assuming all columns are empty, we will then remove any that contain
         // a galaxy.
         Set<Integer> emptyColumns = new HashSet<>(IntStream.range(0, input.size()).boxed().toList());
@@ -78,7 +79,7 @@ public class Day11 extends AoCDayAbstract {
         }
 
         // each row should be increased to cater for any extra columns.
-        int newRowLength = input.get(0).length() + emptyColumns.size();
+        int newRowLength = input.get(0).length() + (scaleFactor * emptyColumns.size());
 
         char[] emptyRow = new char[newRowLength];
         Arrays.fill(emptyRow, '.');
@@ -87,16 +88,20 @@ public class Day11 extends AoCDayAbstract {
 
         for (var i = 0; i < input.size(); ++i) {
             StringBuilder sb = new StringBuilder(input.get(i));
-            int offset = 0;
+            int xOffset = 0;
             for (var newCol : emptyColumns) {
-                sb.insert((offset++) + newCol, '.');
+                for (int k = 0; k < scaleFactor; ++k) {
+                    sb.insert((xOffset++) + newCol, '.');
+                }
             }
             var expandedRow = sb.toString();
             expanded.add(expandedRow);
 
             if (emptyRows.contains(i)) {
-                expanded.add(String.valueOf(emptyRow));
-                yOffset += 1;
+                for (int k = 0; k < scaleFactor; ++k) {
+                    expanded.add(String.valueOf(emptyRow));
+                    yOffset += 1;
+                }
             }
 
             for (var x = 0; x < expandedRow.length(); ++x) {
