@@ -1,7 +1,9 @@
 package com.carniware.aoc.day13;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -11,6 +13,7 @@ import com.carniware.aoc.common.AoCDayAbstract;
 @Component
 @Order(13)
 public class Day13 extends AoCDayAbstract {
+    private Map<String, Integer> hammingMem;
     public Day13() {
         this("src/main/java/com/carniware/aoc/day13/sample.txt");
     }
@@ -23,6 +26,7 @@ public class Day13 extends AoCDayAbstract {
     private void calculate() {
         List<Long> rowCounts = new ArrayList<>();
         List<Long> colCounts = new ArrayList<>();
+        hammingMem = new HashMap<>();
         int start = 0;
         // add an empty line to the end of input to make the data consistent.
         input.addLast("");
@@ -95,5 +99,27 @@ public class Day13 extends AoCDayAbstract {
         }
 
         return transposed;
+    }
+
+    private int hammingDistance(String input1, String input2) {
+        if (input1.length() != input2.length()) {
+            // Can't compute the hamming distance of unequal length strings
+            return -1;
+        }
+
+        var key = String.format("%s`%s", input1,input2);
+        if (hammingMem.containsKey(key)) {
+            return hammingMem.get(String.format("%s`%s", input1,input2));
+        }
+
+        var distance = 0;
+        for (var i = 0; i < input1.length(); ++i) {
+            if (input1.charAt(i) != input2.charAt(i)) {
+                ++distance;
+            }
+        }
+
+        hammingMem.put(key, distance);
+        return distance;
     }
 }
