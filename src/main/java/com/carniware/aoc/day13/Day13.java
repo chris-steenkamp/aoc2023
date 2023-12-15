@@ -1,6 +1,6 @@
 package com.carniware.aoc.day13;
 
-import static com.carniware.aoc.common.Helper.transpose;
+import static com.carniware.aoc.common.Helper.rotate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +48,7 @@ public class Day13 extends AoCDayAbstract {
                     rowCounts.add(rows);
                 } else {
                     // Only perform the more expensive tranpose check if the row count is 0.
-                    colCounts.add(countMirroredRows(transpose(input.subList(start, i))));
+                    colCounts.add(countMirroredRows(rotate(input.subList(start, i))));
                 }
                 start = i + 1;
             }
@@ -67,7 +67,7 @@ public class Day13 extends AoCDayAbstract {
                     rowCounts.add(rows);
                 } else {
                     // Only perform the more expensive tranpose check if the row count is 0.
-                    colCounts.add(countMirroredRowsSmudged(transpose(input.subList(start, i))));
+                    colCounts.add(countMirroredRowsSmudged(rotate(input.subList(start, i))));
                 }
                 start = i + 1;
             }

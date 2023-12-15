@@ -18,18 +18,35 @@ public class Helper {
 		return result;
 	}
 
-	public static List<String> transpose(List<String> inputRows) {
+	public static List<String> rotate(List<String> inputRows) {
+		return rotate(inputRows, false);
+	}
+
+	public static List<String> rotate(List<String> inputRows, Boolean reverse) {
 		List<String> transposed = new ArrayList<>();
 
-		int rows = inputRows.getFirst().length();
-		int cols = inputRows.size();
-		for (var i = 0; i < rows; ++i) {
-			StringBuilder sb = new StringBuilder();
-			for (var j = cols - 1; j >= 0; --j) {
-				sb.append(inputRows.get(j).charAt(i));
-			}
+		if (reverse) {
+			int rows = inputRows.getFirst().length();
+			int cols = inputRows.size();
+			for (var j = rows - 1; j >= 0; --j) {
+				StringBuilder sb = new StringBuilder();
+				for (var i = 0; i < cols; ++i) {
+					sb.append(inputRows.get(i).charAt(j));
+				}
 
-			transposed.add(sb.toString());
+				transposed.add(sb.toString());
+			}
+		} else {
+			int rows = inputRows.getFirst().length();
+			int cols = inputRows.size();
+			for (var i = 0; i < rows; ++i) {
+				StringBuilder sb = new StringBuilder();
+				for (var j = cols - 1; j >= 0; --j) {
+					sb.append(inputRows.get(j).charAt(i));
+				}
+
+				transposed.add(sb.toString());
+			}
 		}
 
 		return transposed;
