@@ -2,6 +2,8 @@ package com.carniware.aoc.day14;
 
 import static com.carniware.aoc.common.Helper.transpose;
 
+import java.util.List;
+
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -24,28 +26,66 @@ public class Day14 extends AoCDayAbstract {
         calculate();
     }
 
+    private String swapChars(char[] input, int char1, int char2) {
+        if (char1 != char2) {
+            char temp = input[char2];
+            input[char2] = input[char1];
+            input[char1] = temp;
+        }
+
+        return new String(input);
+    }
+
     private void calculate() {
-        // transpose the input to allow treating the columns as rows.
-        var transposed = transpose(input);
-        for (var line : transposed) {
-            // each round rock can move an amount equal to the number of spaces (.) that appear before it + 1
-            int count = 0;
-            for (var i = line.length() - 1; i > -1; --i) {
-                switch (line.charAt(i)) {
-                    case '.': {
-                        ++count;
-                        break;
-                    }
-                    case 'O': {
-                        part1Result += count + i + 1;
-                        break;
-                    }
-                    case '#': {
-                        count = 0;
-                        break;
+        calculatePart1();
+        calculatePart2();
+    }
+
+    private void calculatePart1() {
+        part1Result = tiltPlatform(input, true, true, 0);
+    }
+
+    private long tiltPlatform(List<String> input, Boolean reverse, Boolean transpose, int cycles) {
+        long result = 0;
+        if (transpose) {
+            // transpose the input to allow treating the columns as rows.
+            input = transpose(input);
+        }
+
+        if (reverse) {
+            for (var y = 0; y < input.size(); ++y) {
+                var line = input.get(y);
+                // each round rock can move an amount equal to the number of spaces (.) that
+                // appear before it + 1
+                int count = 0;
+                for (var i = line.length() - 1; i > -1; --i) {
+                    switch (line.charAt(i)) {
+                        case '.': {
+                            ++count;
+                            break;
+                        }
+                        case 'O': {
+                            var newPosition = count + i;
+                            line = swapChars(line.toCharArray(), i, newPosition);
+                            result += newPosition + 1;
+                            break;
+                        }
+                        case '#': {
+                            count = 0;
+                            break;
+                        }
                     }
                 }
+                input.set(y, line);
             }
+        } else {
+
         }
+
+        return result;
+    }
+
+    private void calculatePart2() {
+        part2Result = tiltPlatform(input, true, true, 0);
     }
 }
