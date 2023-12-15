@@ -49,6 +49,7 @@ public class Day14 extends AoCDayAbstract {
         long result = 0;
         if (transpose) {
             // transpose the input to allow treating the columns as rows.
+            // this makes it easier to handle north or south tilts.
             input = transpose(input);
         }
 
@@ -79,13 +80,37 @@ public class Day14 extends AoCDayAbstract {
                 input.set(y, line);
             }
         } else {
-
+            for (var y = 0; y < input.size(); ++y) {
+                var line = input.get(y);
+                // each round rock can move an amount equal to the number of spaces (.) that
+                // appear before it + 1
+                int count = 0;
+                for (var i = 0; i < input.size(); ++i) {
+                    switch (line.charAt(i)) {
+                        case '.': {
+                            ++count;
+                            break;
+                        }
+                        case 'O': {
+                            var newPosition = i - count;
+                            line = swapChars(line.toCharArray(), i, newPosition);
+                            result += newPosition + 1;
+                            break;
+                        }
+                        case '#': {
+                            count = 0;
+                            break;
+                        }
+                    }
+                }
+                input.set(y, line);
+            }
         }
 
         return result;
     }
 
     private void calculatePart2() {
-        part2Result = tiltPlatform(input, true, true, 0);
+        part2Result = tiltPlatform(input, false, true, 0);
     }
 }
