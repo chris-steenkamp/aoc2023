@@ -29,7 +29,7 @@ public class Day14 extends AoCDayAbstract {
             entry(DIRECTION.E, DIRECTION.N));
 
     public Day14() {
-        this("src/main/java/com/carniware/aoc/day14/sample.txt");
+        this("src/main/java/com/carniware/aoc/day14/input.txt");
     }
 
     public Day14(String filename) {
@@ -66,29 +66,28 @@ public class Day14 extends AoCDayAbstract {
     }
 
     private long tiltPlatform(List<String> input, long cycles) {
-        long result = 0;
-        Boolean isCycle = false;
+        RotatedInput rotated = new RotatedInput(0, input);
         Map<String, Long> mem = new LinkedHashMap<>();
         for (long c = 0; c < cycles; ++c) {
-            if (!isCycle) {
-                var key = String.join("", input);
-                if (mem.containsKey(key)) {
-                    var start = mem.get(key);
-                    var length = c - start;
-                    c = start + (length * Math.floorDiv(cycles-start, length));
-                    isCycle = true;
-                }
+            var key = String.join("", rotated.input);
+            if (mem.containsKey(key)) {
+                var start = mem.get(key);
+                var length = c - start;
+                // We can skip most of the loop as it just repeats over and over again.
+                // We only need to process the portion which remains after dividing by the cycle
+                // length.
+                c = cycles - ((cycles - start) % length);
+            } else {
                 mem.put(key, c);
             }
-            var rotated = rotateInput(input, 4);
-            input = rotated.input;
-            result = rotated.result;
+            rotated = rotateInput(rotated.input, 4);
         }
-    
-        return result;
+
+        return rotated.result;
     }
 
-    record RotatedInput(long result, List<String> input) {}
+    record RotatedInput(long result, List<String> input) {
+    }
 
     private RotatedInput rotateInput(List<String> input, int numberOfTimes) {
         DIRECTION tiltDirection = DIRECTION.N;
