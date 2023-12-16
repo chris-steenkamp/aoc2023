@@ -1,8 +1,7 @@
 package com.carniware.aoc.day15;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.core.annotation.Order;
@@ -36,31 +35,28 @@ public class Day15 extends AoCDayAbstract {
         return wrapper.current;
     }
 
-    record Step(String label, char operation, int lense) {
-    }
-
     private void calculate() {
-        List<Integer> hashes = new ArrayList<>();
-        List<Step> steps = new ArrayList<>();
-        Map<Integer, Map<String, Integer>> boxes = new LinkedHashMap<>();
+        Map<Integer, Map<String, Integer>> boxes = new HashMap<>();
         for (var line : input) {
             for (var step : line.split(",")) {
-                hashes.add(getHash(step));
+                part1Result += getHash(step);
+                
                 var stepParts = step.splitWithDelimiters("=|-", 0);
-                Step s = new Step(stepParts[0], stepParts[1].charAt(0),
-                        stepParts.length > 2 ? Integer.parseInt(stepParts[2]) : -1);
 
-                var stepHash = getHash(s.label);
+                var stepHash = getHash(stepParts[0]);
+                // Luckily java has a LinkedHashMap which uses a linked list in the background
+                // to manage the hash keys. This ensures that the order lenses are added and removed
+                // from each box remains consistent. The regular HashMap type does not maintain insertion
+                // order which means that our final list of lenses could be in the incorrect order.
                 var lensesInBox = boxes.getOrDefault(stepHash, new LinkedHashMap<>());
-                if (s.operation == '-') {
-                    lensesInBox.remove(s.label);
-                } else if (s.operation == '=') {
-                    lensesInBox.put(s.label, s.lense);
+                if (stepParts[1].equals("-")) {
+                    lensesInBox.remove(stepParts[0]);
+                } else {
+                    lensesInBox.put(stepParts[0], Integer.parseInt(stepParts[2]));
                 }
                 boxes.put(stepHash, lensesInBox);
             }
         }
-        part1Result = hashes.stream().reduce(Integer::sum).get();
 
         for (var box : boxes.keySet()) {
             int lensePosition = 1;
