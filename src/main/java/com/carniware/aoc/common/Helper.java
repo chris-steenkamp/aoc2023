@@ -25,10 +25,10 @@ public class Helper {
 				entry(HEADING.E, HEADING.N));
 
 		static Map<HEADING, HEADING> nextDirection = Map.ofEntries(
-				entry(HEADING.N, HEADING.W),
-				entry(HEADING.W, HEADING.S),
-				entry(HEADING.S, HEADING.E),
-				entry(HEADING.E, HEADING.N));
+				entry(HEADING.N, HEADING.E),
+				entry(HEADING.E, HEADING.S),
+				entry(HEADING.S, HEADING.W),
+				entry(HEADING.W, HEADING.N));
 
 		public static HEADING turnLeft(HEADING heading) {
 			return previousDirection.get(heading);
