@@ -1,7 +1,7 @@
 package com.carniware.aoc.day14;
 
 import static com.carniware.aoc.common.Helper.rotate;
-import static java.util.Map.entry;
+import static com.carniware.aoc.common.Helper.CardinalDirection.turnLeft;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -11,23 +11,11 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import com.carniware.aoc.common.AoCDayAbstract;
+import com.carniware.aoc.common.Helper.CardinalDirection.HEADING;
 
 @Component
 @Order(14)
 public class Day14 extends AoCDayAbstract {
-    enum DIRECTION {
-        N, // tilt south to north
-        W, // tilt east to west
-        S, // tilt north to south
-        E // tilt west to east
-    }
-
-    static Map<DIRECTION, DIRECTION> nextDirection = Map.ofEntries(
-            entry(DIRECTION.N, DIRECTION.W),
-            entry(DIRECTION.W, DIRECTION.S),
-            entry(DIRECTION.S, DIRECTION.E),
-            entry(DIRECTION.E, DIRECTION.N));
-
     public Day14() {
         this("src/main/java/com/carniware/aoc/day14/input.txt");
     }
@@ -90,10 +78,10 @@ public class Day14 extends AoCDayAbstract {
     }
 
     private RotatedInput rotateInput(List<String> input, int numberOfTimes) {
-        DIRECTION tiltDirection = DIRECTION.N;
+        HEADING tiltDirection = HEADING.N;
         long result = 0;
         for (var r = 0; r < numberOfTimes; ++r) {
-            if (tiltDirection == DIRECTION.N || tiltDirection == DIRECTION.S) {
+            if (tiltDirection == HEADING.N || tiltDirection == HEADING.S) {
                 // transpose the input to allow treating the columns as rows.
                 // this makes it easier to handle north or south tilts.
                 input = rotate(input);
@@ -103,7 +91,7 @@ public class Day14 extends AoCDayAbstract {
                 result = 0;
             }
 
-            if (tiltDirection == DIRECTION.N || tiltDirection == DIRECTION.E) {
+            if (tiltDirection == HEADING.N || tiltDirection == HEADING.E) {
                 for (var y = 0; y < input.size(); ++y) {
                     var line = input.get(y);
                     // each round rock can move an amount equal to the number of spaces (.) that
@@ -120,7 +108,7 @@ public class Day14 extends AoCDayAbstract {
                                 line = swapChars(line.toCharArray(), i, newPosition);
                                 // the load should only change if we are tilting N or S
                                 // E and W tilts don't change the load in the vertical axis.
-                                if (tiltDirection == DIRECTION.N) {
+                                if (tiltDirection == HEADING.N) {
                                     result += newPosition + 1;
                                 }
                                 break;
@@ -148,7 +136,7 @@ public class Day14 extends AoCDayAbstract {
                             case 'O': {
                                 var newPosition = i - count;
                                 line = swapChars(line.toCharArray(), i, newPosition);
-                                if (tiltDirection == DIRECTION.S) {
+                                if (tiltDirection == HEADING.S) {
                                     result += newPosition + 1;
                                 }
                                 break;
@@ -162,11 +150,11 @@ public class Day14 extends AoCDayAbstract {
                     input.set(y, line);
                 }
             }
-            if (tiltDirection == DIRECTION.N || tiltDirection == DIRECTION.S) {
+            if (tiltDirection == HEADING.N || tiltDirection == HEADING.S) {
                 // rotate the input back to its original orientation.
                 input = rotate(input, true);
             }
-            tiltDirection = nextDirection.get(tiltDirection);
+            tiltDirection = turnLeft(tiltDirection);
         }
         return new RotatedInput(result, input);
     }
