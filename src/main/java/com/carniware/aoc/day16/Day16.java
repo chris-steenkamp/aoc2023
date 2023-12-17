@@ -3,11 +3,14 @@ package com.carniware.aoc.day16;
 import static com.carniware.aoc.common.Helper.CardinalDirection.turnLeft;
 import static com.carniware.aoc.common.Helper.CardinalDirection.turnRight;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -19,17 +22,12 @@ import com.carniware.aoc.common.Helper.CardinalDirection.HEADING;
 @Order(16)
 public class Day16 extends AoCDayAbstract {
     public Day16() {
-        this("src/main/java/com/carniware/aoc/day16/input.txt");
+        this("src/main/java/com/carniware/aoc/day16/sample.txt", 1);
     }
 
-    public Day16(String filename) {
+    public Day16(String filename, int parts) {
         super(filename);
-        calculate();
-    }
-
-    public Day16(String[] inputs) {
-        super(inputs);
-        calculate();
+        calculate(parts);
     }
 
     record Point2(int x, int y) {
@@ -42,10 +40,6 @@ public class Day16 extends AoCDayAbstract {
         int moves;
 
         Beam(int x, int y, HEADING heading) {
-            this(x, y, heading, 0);
-        }
-
-        Beam(int x, int y, HEADING heading, int moves) {
             this.x = x;
             this.y = y;
             this.heading = heading;
@@ -100,25 +94,37 @@ public class Day16 extends AoCDayAbstract {
         }
     }
 
-    private void calculate() {
+    private void calculate(int parts) {
         part1Result = simulate(0, 0, HEADING.E);
-        part2Result = runSimulations();
+        if (parts > 1) {
+            part2Result = runSimulations();
+        }
     }
 
     private int runSimulations() {
-        int result = Integer.MIN_VALUE;
+        List<Integer> results = new ArrayList<>();
 
-        for (var y = 0; y < input.size(); ++y) {
-            result = Math.max(result, simulate(0, y, HEADING.E));
-            result = Math.max(result, simulate(0, (input.size() - y) - 1, HEADING.W));
-        }
+        IntStream.range(0, 4).parallel().forEach(i -> {
+            if (i == 0) {
+                IntStream.range(0, input.size()).parallel().forEach(y -> {
+                    results.add(simulate(0, y, HEADING.E));
+                });
+            } else if (i == 1) {
+                IntStream.range(0, input.size()).parallel().forEach(y -> {
+                    results.add(simulate(0, (input.size() - y) - 1, HEADING.W));
+                });
+            } else if (i == 2) {
+                IntStream.range(0, input.getFirst().length()).parallel().forEach(x -> {
+                    results.add(simulate(x, 0, HEADING.S));
+                });
+            } else if (i == 3) {
+                IntStream.range(0, input.getFirst().length()).parallel().forEach(x -> {
+                    results.add(simulate((input.getFirst().length() - x) - 1, 0, HEADING.N));
+                });
+            }
+        });
 
-        for (var x = 0; x < input.getFirst().length(); ++x) {
-            result = Math.max(result, simulate(x, 0, HEADING.S));
-            result = Math.max(result, simulate((input.getFirst().length() - x) - 1, 0, HEADING.N));
-        }
-
-        return result;
+        return results.stream().max(Integer::compare).get();
     }
 
     private int simulate(int x, int y, HEADING heading) {
