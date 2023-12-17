@@ -101,19 +101,40 @@ public class Day16 extends AoCDayAbstract {
     }
 
     private void calculate() {
+        part1Result = simulate(0, 0, HEADING.E);
+        part2Result = runSimulations();
+    }
+
+    private int runSimulations() {
+        int result = Integer.MIN_VALUE;
+
+        for (var y = 0; y < input.size(); ++y) {
+            result = Math.max(result, simulate(0, y, HEADING.E));
+            result = Math.max(result, simulate(0, (input.size() - y) - 1, HEADING.W));
+        }
+
+        for (var x = 0; x < input.getFirst().length(); ++x) {
+            result = Math.max(result, simulate(x, 0, HEADING.S));
+            result = Math.max(result, simulate((input.getFirst().length() - x) - 1, 0, HEADING.N));
+        }
+
+        return result;
+    }
+
+    private int simulate(int x, int y, HEADING heading) {
         Set<Beam> beams = new HashSet<>();
         Set<Point2> energised = new HashSet<>();
         Map<String, Integer> mem = new HashMap<>();
         Boolean isCycle = false;
 
-        beams.add(new Beam(0, 0, HEADING.E));
+        beams.add(new Beam(x, y, heading));
         int maxX = input.getFirst().length();
         int maxY = input.size();
         while (!beams.isEmpty()) {
             Set<Beam> newBeams = new HashSet<>();
             // calculate next position of each beam
             if (!isCycle) {
-                if (beams.stream().allMatch(x -> mem.containsKey(x.toString()))) {
+                if (beams.stream().allMatch(i -> mem.containsKey(i.toString()))) {
                     isCycle = true;
                 }
             }
@@ -194,6 +215,6 @@ public class Day16 extends AoCDayAbstract {
             beams = newBeams;
         }
 
-        part1Result = energised.size();
+        return energised.size();
     }
 }
