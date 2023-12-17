@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import com.carniware.aoc.common.AoCDayAbstract;
 import com.carniware.aoc.common.Helper.CardinalDirection.HEADING;
+import com.carniware.aoc.common.Helper.Point2;
 
 @Component
 @Order(16)
@@ -28,9 +29,6 @@ public class Day16 extends AoCDayAbstract {
     public Day16(String filename, int parts) {
         super(filename);
         calculate(parts);
-    }
-
-    record Point2(int x, int y) {
     }
 
     class Beam {

@@ -10,6 +10,24 @@ import java.util.List;
 import java.util.Map;
 
 public class Helper {
+	public record Point2(int x, int y) {
+		public Boolean withinBounds(int x, int y) {
+			return withinBounds(0, 0, x, y);
+		}
+
+		public Boolean withinBounds(int x1, int y1, int x2, int y2) {
+			if (x < x1 || x >= x2 || y < y1 || y >= y2) {
+				return false;
+			}
+
+			return true;
+		}
+	}
+
+	public static long getManhattanDistance(Point2 p1, Point2 p2) {
+		return Math.abs(p1.x - p2.x) + Math.abs(p1.y - p2.y);
+	}
+
 	public static class CardinalDirection {
 		public enum HEADING {
 			N, // heading south to north
