@@ -10,18 +10,25 @@ import java.util.List;
 import java.util.Map;
 
 public class Helper {
-	public record Point2(int x, int y) {
-		public Boolean withinBounds(int x, int y) {
-			return withinBounds(0, 0, x, y);
+	public interface P2 {
+		int x();
+
+		int y();
+	}
+
+	public record Point2(int x, int y) implements P2 {
+	}
+
+	public static Boolean withinBounds(P2 p, int x, int y) {
+		return withinBounds(p, 0, 0, x, y);
+	}
+
+	public static Boolean withinBounds(P2 p, int x1, int y1, int x2, int y2) {
+		if (p.x() < x1 || p.x() >= x2 || p.y() < y1 || p.y() >= y2) {
+			return false;
 		}
 
-		public Boolean withinBounds(int x1, int y1, int x2, int y2) {
-			if (x < x1 || x >= x2 || y < y1 || y >= y2) {
-				return false;
-			}
-
-			return true;
-		}
+		return true;
 	}
 
 	public static long getManhattanDistance(Point2 p1, Point2 p2) {
