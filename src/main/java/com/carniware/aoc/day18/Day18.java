@@ -6,6 +6,7 @@ import static com.carniware.aoc.common.Helper.CardinalDirection.getPointTranslat
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HexFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Component;
 
 import com.carniware.aoc.common.AoCDayAbstract;
 import com.carniware.aoc.common.Helper.CardinalDirection.HEADING;
-import com.carniware.aoc.common.Helper.Point2;
+import com.carniware.aoc.common.Helper.Point2l;
 
 @Component
 @Order(18)
@@ -33,11 +34,11 @@ public class Day18 extends AoCDayAbstract {
         calculate();
     }
 
-    record DigInstruction(HEADING heading, int size, String colour) {
+    record DigInstruction(HEADING heading, long size, String colour) {
     }
 
-    private void adjustBorderCorner(Map<Point2, HEADING> border, DigInstruction instruction,
-            DigInstruction previousInstruction, Point2 previousPoint) {
+    private void adjustBorderCorner(Map<Point2l, HEADING> border, DigInstruction instruction,
+            DigInstruction previousInstruction, Point2l previousPoint) {
         // similar to the logic used in day 10, assign all corners that are going up or
         // down a vertical heading and then assign all those going left or right a
         // horizontal heading. This is required when implementing the even odd or
@@ -59,22 +60,46 @@ public class Day18 extends AoCDayAbstract {
         }
     }
 
+    private HEADING getRealHeading(String hexValue) {
+        switch (hexValue) {
+            case "0":
+                return HEADING.E;
+            case "1":
+                return HEADING.S;
+            case "2":
+                return HEADING.W;
+            case "3":
+                return HEADING.N;
+        }
+
+        return null;
+    }
+
+    private DigInstruction parseColourString(String colourString) {
+        colourString = colourString.replaceAll("\\(|\\)|#", "");
+
+        long size = HexFormat.fromHexDigitsToLong(colourString, 0, 5);
+        HEADING h = getRealHeading(colourString.substring(5));
+
+        return new DigInstruction(h, size, "");
+    }
+
     private void calculate() {
         List<DigInstruction> instructions = new ArrayList<>();
-        Map<Point2, HEADING> border = new HashMap<>();
-        Point2 start = new Point2(0, 0);
-        var minY = Integer.MAX_VALUE;
-        var minX = Integer.MAX_VALUE;
-        var maxY = Integer.MIN_VALUE;
-        var maxX = Integer.MIN_VALUE;
+        Map<Point2l, HEADING> border = new HashMap<>();
+        Point2l start = new Point2l(0, 0);
+        var minY = Long.MAX_VALUE;
+        var minX = Long.MAX_VALUE;
+        var maxY = Long.MIN_VALUE;
+        var maxX = Long.MIN_VALUE;
         DigInstruction previousInstruction = null;
-        Point2 previousPoint = null;
+        Point2l previousPoint = null;
         for (var line : input) {
             var parts = line.split(" ");
             var instruction = new DigInstruction(fromDirection(parts[0]), Integer.parseInt(parts[1]), parts[2]);
             instructions.add(instruction);
             adjustBorderCorner(border, instruction, previousInstruction, previousPoint);
-            for (int i = 0; i < instruction.size; ++i) {
+            for (long i = 0; i < instruction.size; ++i) {
                 start = addPoints(start, getPointTranslation(instruction.heading));
                 border.put(start, instruction.heading);
                 minY = Math.min(minY, start.y());
@@ -89,14 +114,50 @@ public class Day18 extends AoCDayAbstract {
         // Adjust the corner where the end meets the start.
         adjustBorderCorner(border, instructions.getFirst(), previousInstruction, previousPoint);
 
+        calculatePart1(border, minX, minY, maxX, maxY);
+        // extract the real digging instruction from the "colour" string
+        calculatePart2(instructions.stream().map(x -> parseColourString(x.colour)).toList());
+    }
+
+    private void calculatePart2(List<DigInstruction> instructions) {
+        List<Point2l> points = new ArrayList<>();
+        Point2l start = new Point2l(0, 0);
+        var border = 0l;
+        // generate the cartesian points for each digging instruction
+        // also tally up the size of the perimeter while we are busy.
+        for (var instruction : instructions) {
+            // there is definitely a better way to do this, but we already have
+            // the translation helper to move a single point, so we just apply that
+            // movement a whole bunch of times move the point to the correct place.
+            for (long i = 0; i < instruction.size; ++i) {
+                start = addPoints(start, getPointTranslation(instruction.heading));
+            }
+            points.add(start);
+            border += instruction.size;
+        }
+
+        var sum1 = 0l;
+        var sum2 = 0l;
+
+        // apply the shoelace formula to calculate the area of the polygon.
+        for (int i = 0; i < points.size() - 1; ++i) {
+            sum1 += points.get(i).x() * points.get(i + 1).y();
+            sum2 += points.get(i).y() * points.get(i + 1).x();
+        }
+
+        part2Result = (Math.abs(sum1 - sum2) + border) / 2 + 1;
+    }
+
+    private void calculatePart1(Map<Point2l, HEADING> border, long minX, long minY, long maxX, long maxY) {
         var crossings = 0;
         // char[][] board = new char[(maxY - minY) + 1][(maxX - minX) + 1];
         for (var y = minY; y <= maxY; ++y) {
             var counter = 0;
             for (var x = minX; x <= maxX; ++x) {
-                Point2 p = new Point2(x, y);
-                // For drawing we need to move the original coordinates to be in the positive cartesian plane.
-                // Point2 correctedPoint = new Point2(x - minX, y - minY);
+                Point2l p = new Point2l(x, y);
+                // For drawing we need to move the original coordinates to be in the positive
+                // cartesian plane.
+                // Point2l correctedPoint = new Point2l(x - minX, y - minY);
                 if (border.containsKey(p)) {
                     // board[correctedPoint.y()][correctedPoint.x()] = (border.get(p) == HEADING.N
                     // || border.get(p) == HEADING.S) ? '|' : '-';

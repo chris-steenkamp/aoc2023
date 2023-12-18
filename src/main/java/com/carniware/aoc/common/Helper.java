@@ -16,11 +16,26 @@ public class Helper {
 		int y();
 	}
 
+	public record Point2l(long x, long y) {
+	}
+
 	public record Point2(int x, int y) implements P2 {
 	}
 
 	public static Point2 addPoints(Point2 p1, Point2 p2) {
 		return new Point2(p1.x + p2.x, p1.y + p2.y);
+	}
+
+	public static Point2l addPoints(Point2l p1, Point2l p2) {
+		return new Point2l(p1.x + p2.x, p1.y + p2.y);
+	}
+
+	public static Point2l addPoints(Point2 p1, Point2l p2) {
+		return new Point2l(p1.x + p2.x, p1.y + p2.y);
+	}
+
+	public static Point2l addPoints(Point2l p1, Point2 p2) {
+		return new Point2l(p1.x + p2.x, p1.y + p2.y);
 	}
 
 	public static Boolean withinBounds(P2 p, int x, int y) {
