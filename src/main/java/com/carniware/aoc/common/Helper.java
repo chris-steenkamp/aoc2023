@@ -65,6 +65,21 @@ public class Helper {
 				entry(HEADING.N, new Point2(0, -1)),
 				entry(HEADING.S, new Point2(0, 1)));
 
+		public static HEADING fromDirection(String direction) {
+			switch (direction) {
+				case "U":
+					return HEADING.N;
+				case "D":
+					return HEADING.S;
+				case "R":
+					return HEADING.E;
+				case "L":
+					return HEADING.W;
+			}
+
+			return null;
+		}
+
 		public static HEADING turnLeft(HEADING heading) {
 			return previousDirection.get(heading);
 		}
