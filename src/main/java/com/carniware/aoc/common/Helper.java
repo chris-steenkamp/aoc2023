@@ -19,6 +19,10 @@ public class Helper {
 	public record Point2(int x, int y) implements P2 {
 	}
 
+	public static Point2 addPoints(Point2 p1, Point2 p2) {
+		return new Point2(p1.x + p2.x, p1.y + p2.y);
+	}
+
 	public static Boolean withinBounds(P2 p, int x, int y) {
 		return withinBounds(p, 0, 0, x, y);
 	}
@@ -55,12 +59,22 @@ public class Helper {
 				entry(HEADING.S, HEADING.W),
 				entry(HEADING.W, HEADING.N));
 
+		static Map<HEADING, Point2> pointTranslations = Map.ofEntries(
+				entry(HEADING.E, new Point2(1, 0)),
+				entry(HEADING.W, new Point2(-1, 0)),
+				entry(HEADING.N, new Point2(0, -1)),
+				entry(HEADING.S, new Point2(0, 1)));
+
 		public static HEADING turnLeft(HEADING heading) {
 			return previousDirection.get(heading);
 		}
 
 		public static HEADING turnRight(HEADING heading) {
 			return nextDirection.get(heading);
+		}
+
+		public static Point2 getPointTranslation(HEADING heading) {
+			return pointTranslations.get(heading);
 		}
 	}
 
