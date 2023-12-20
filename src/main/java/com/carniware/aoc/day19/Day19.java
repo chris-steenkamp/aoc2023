@@ -37,6 +37,18 @@ public class Day19 extends AoCDayAbstract {
     record Rule(char operand1, char operator, long operand2, String targetRule) {
     };
 
+    record Range(long lowerBound, long upperBound) {
+        public long size() {
+            return upperBound + 1 - lowerBound;
+        }
+    }
+
+    record RangedPart(Range x, Range m, Range a, Range s) {
+        public long tally() {
+            return x.size() * m.size() * a.size() * s.size();
+        }
+    }
+
     private long parsePartString(String partString) {
         return Long.parseLong(partString.split("=")[1]);
     }
@@ -82,6 +94,7 @@ public class Day19 extends AoCDayAbstract {
         }
 
         calculatePart1(partsList, rules);
+        calculatePart2(rules);
     }
 
     private Boolean compareOperands(long operand1, long operand2, char comparator) {
@@ -134,10 +147,10 @@ public class Day19 extends AoCDayAbstract {
         Boolean accepted = false;
 
         stack.push(findNextRule(part, rules.get("in")));
-        
+
         while (!stack.isEmpty()) {
             var rule = stack.pop();
-            if (rule.targetRule.equals("R")){
+            if (rule.targetRule.equals("R")) {
                 break;
             }
 
@@ -154,12 +167,107 @@ public class Day19 extends AoCDayAbstract {
     private void calculatePart1(List<Part> partsList, Map<String, List<Rule>> rules) {
         List<Part> acceptedParts = new ArrayList<>();
 
-        partsList.stream().parallel().forEach(x -> {
+        partsList.stream().forEach(x -> {
             if (processPart(x, rules)) {
                 acceptedParts.add(x);
             }
         });
 
         part1Result = acceptedParts.stream().map(x -> x.tally()).reduce(Long::sum).get();
+    }
+
+    private long countRanges(RangedPart ranges, String ruleName, Map<String, List<Rule>> rules, int skip) {
+        if (ruleName.equals("A")) {
+            return ranges.tally();
+        } else if (ruleName.equals("R")) {
+            return 0;
+        }
+
+        int count = 0;
+        for (var rule : rules.get(ruleName)) {
+            if (count++ < skip) {
+                continue;
+            }
+            Range rangeMatched = null;
+            Range rangeNotMatched = null;
+            switch (rule.operand1) {
+                case '-': {
+                    return countRanges(ranges, rule.targetRule, rules, 0);
+                }
+                case 'x': {
+                    Range r = ranges.x;
+                    if (rule.operator == '<') {
+                        rangeMatched = new Range(r.lowerBound, rule.operand2 - 1);
+                        rangeNotMatched = new Range(rule.operand2, r.upperBound);
+                    } else {
+                        rangeMatched = new Range(rule.operand2 + 1, r.upperBound);
+                        rangeNotMatched = new Range(r.lowerBound, rule.operand2);
+                    }
+
+                    var matched = new RangedPart(rangeMatched, ranges.m, ranges.a, ranges.s);
+                    var unmatched = new RangedPart(rangeNotMatched, ranges.m, ranges.a, ranges.s);
+                    return countRanges(matched, rule.targetRule, rules, 0)
+                            + countRanges(unmatched, ruleName, rules, skip + 1);
+                }
+                case 'm': {
+                    Range r = ranges.m;
+                    if (rule.operator == '<') {
+                        rangeMatched = new Range(r.lowerBound, rule.operand2 - 1);
+                        rangeNotMatched = new Range(rule.operand2, r.upperBound);
+                    } else {
+                        rangeMatched = new Range(rule.operand2 + 1, r.upperBound);
+                        rangeNotMatched = new Range(r.lowerBound, rule.operand2);
+                    }
+
+                    var matched = new RangedPart(ranges.x, rangeMatched, ranges.a, ranges.s);
+                    var unmatched = new RangedPart(ranges.x, rangeNotMatched, ranges.a, ranges.s);
+                    return countRanges(matched, rule.targetRule, rules, 0) +
+                            countRanges(unmatched, ruleName, rules, skip + 1);
+                }
+                case 'a': {
+                    Range r = ranges.a;
+                    if (rule.operator == '<') {
+                        rangeMatched = new Range(r.lowerBound, rule.operand2 - 1);
+                        rangeNotMatched = new Range(rule.operand2, r.upperBound);
+                    } else {
+                        rangeMatched = new Range(rule.operand2 + 1, r.upperBound);
+                        rangeNotMatched = new Range(r.lowerBound, rule.operand2);
+                    }
+
+                    var matched = new RangedPart(ranges.x, ranges.m, rangeMatched, ranges.s);
+                    var unmatched = new RangedPart(ranges.x, ranges.m, rangeNotMatched, ranges.s);
+                    return countRanges(matched, rule.targetRule, rules, 0) +
+                            countRanges(unmatched, ruleName, rules, skip + 1);
+                }
+                case 's': {
+                    Range r = ranges.s;
+                    if (rule.operator == '<') {
+                        rangeMatched = new Range(r.lowerBound, rule.operand2 - 1);
+                        rangeNotMatched = new Range(rule.operand2, r.upperBound);
+                    } else {
+                        rangeMatched = new Range(rule.operand2 + 1, r.upperBound);
+                        rangeNotMatched = new Range(r.lowerBound, rule.operand2);
+                    }
+
+                    var matched = new RangedPart(ranges.x, ranges.m, ranges.a, rangeMatched);
+                    var unmatched = new RangedPart(ranges.x, ranges.m, ranges.a, rangeNotMatched);
+                    return countRanges(matched, rule.targetRule, rules, 0) +
+                            countRanges(unmatched, ruleName, rules, skip + 1);
+                }
+            }
+        }
+
+        return -1;
+    }
+
+    private void calculatePart2(Map<String, List<Rule>> rules) {
+        final int start = 1;
+        final int end = 4000;
+
+        var startingRange = new Range(start, end);
+
+        RangedPart part = new RangedPart(startingRange, startingRange, startingRange, startingRange);
+
+        part2Result = countRanges(part, "in", rules, 0);
     }
 }
