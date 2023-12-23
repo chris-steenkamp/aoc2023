@@ -168,4 +168,20 @@ public class Helper {
 
 		return distance;
 	}
+
+	public static long lcm(long first, long second) {
+        if (first == 0 || second == 0) {
+            return 0;
+        }
+
+        var highest = Math.max(Math.abs(first), Math.abs(second));
+        var smallest = Math.min(Math.abs(first), Math.abs(second));
+        var lcm = highest;
+
+        while (lcm % smallest != 0) {
+            lcm += highest;
+        }
+
+        return lcm;
+    }
 }

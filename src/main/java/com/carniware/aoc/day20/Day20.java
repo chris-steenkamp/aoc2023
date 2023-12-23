@@ -13,6 +13,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import com.carniware.aoc.common.AoCDayAbstract;
+import com.carniware.aoc.common.Helper;
 
 @Component
 @Order(20)
@@ -68,7 +69,8 @@ public class Day20 extends AoCDayAbstract {
             }
         }
 
-        calculatePart1(modules, moduleConnections);
+        // calculatePart1(modules, moduleConnections);
+        calculatePart2(modules, moduleConnections, moduleInputs.get("nr"));
     }
 
     private void calculatePart1(Map<String, Module> modules, Map<String, Set<String>> moduleConnections) {
@@ -97,5 +99,41 @@ public class Day20 extends AoCDayAbstract {
         }
 
         part1Result = totalHigh * totalLow;
+    }
+
+    private void calculatePart2(Map<String, Module> modules, Map<String, Set<String>> moduleConnections,
+            Set<String> modulesToWatch) {
+        Queue<Pulse> queue = new LinkedList<>();
+        Map<String, Long> cycles = new HashMap<>();
+
+        long i = 0;
+        if (modules.containsKey("rx")) {
+            while (true) {
+                ++i;
+                queue.add(new Pulse(modules.get("button"), modules.get("broadcaster"), 0, PulseState.LOW));
+                while (!queue.isEmpty()) {
+                    var pulse = queue.poll();
+                    var result = pulse.receiver().handlePulse(pulse);
+
+                    if (result != null) {
+                        for (var connection : moduleConnections.get(pulse.receiver().name)) {
+                            queue.add(new Pulse(pulse.receiver(), modules.get(connection), pulse.id() + 1, result));
+                        }
+                    }
+                    if (modulesToWatch.contains(pulse.sender().name)) {
+                        if (pulse.state().equals(PulseState.HIGH)) {
+                            if (!cycles.containsKey(pulse.sender().name)) {
+                                System.out.println(String.format("Found minimum for %s (%d)", pulse.sender().name, i));
+                                cycles.put(pulse.sender().name, i);
+                            }
+                        }
+                    }
+                }
+                if (cycles.size() == modulesToWatch.size()) {
+                    break;
+                }
+            }
+        }
+        part2Result = cycles.isEmpty() ? 0 : cycles.values().stream().reduce(Helper::lcm).get();
     }
 }

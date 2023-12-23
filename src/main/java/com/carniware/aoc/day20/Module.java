@@ -40,8 +40,8 @@ public abstract class Module {
     }
 
     public PulseState handlePulse(Pulse pulse) {
-        System.out.println(
-                String.format("%s -%s-> %s", pulse.sender(), pulse.state().toString().toLowerCase(), pulse.receiver()));
+        // System.out.println(
+        //         String.format("%s -%s-> %s", pulse.sender(), pulse.state().toString().toLowerCase(), pulse.receiver()));
         return pulse.state();
     }
 
@@ -99,6 +99,10 @@ class FlipFlopModule extends Module {
 class ConjunctionModule extends Module {
     private Map<String, PulseState> inputModules;
 
+    public Map<String, PulseState> getInputModules() {
+        return inputModules;
+    }
+
     public ConjunctionModule(String name) {
         this(name, Set.of());
     }
@@ -108,6 +112,8 @@ class ConjunctionModule extends Module {
         this.inputModules = new HashMap<>();
         inputModules.forEach(x -> this.inputModules.put(x, PulseState.LOW));
     }
+
+    
 
     @Override
     public PulseState handlePulse(Pulse pulse) {
