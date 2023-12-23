@@ -4,6 +4,8 @@ import static com.carniware.aoc.common.Helper.getNeighbours;
 import static com.carniware.aoc.common.Helper.load2dGrid;
 import static com.carniware.aoc.common.Helper.withinBounds;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -19,7 +21,7 @@ import com.carniware.aoc.common.Helper.Point2;
 @Order(21)
 public class Day21 extends AoCDayAbstract {
     public Day21() {
-        this("src/main/java/com/carniware/aoc/day21/sample.txt", 0);
+        this("src/main/java/com/carniware/aoc/day21/sample2.txt", 1000000);
     }
 
     public Day21(String filename) {
@@ -67,11 +69,34 @@ public class Day21 extends AoCDayAbstract {
                     }
                 }
             });
+            // if (newDepth % 10 == 0) {
+                try {
+                    char[][] newGrid = grid;
+                    for (var p : depthMap.entrySet().stream().filter(x -> x.getValue() == newDepth - 1)
+                            .map(x -> x.getKey()).toList()) {
+                        newGrid[p.y()][p.x()] = '0';
+                    }
+                    writeToFile(grid);
+
+                } catch (IOException e) {
+
+                }
+            // }
         }
 
         part1Result = depthMap.values()
                 .stream()
                 .filter(x -> x == numSteps)
                 .count();
+    }
+
+    void writeToFile(char[][] data) throws IOException {
+        FileWriter writer = new FileWriter("src/main/java/com/carniware/aoc/day21/output.txt");
+        for (var y = 0; y < data.length; ++y) {
+            writer.write(data[y]);
+            writer.write("\r\n");
+        }
+
+        writer.close();
     }
 }
