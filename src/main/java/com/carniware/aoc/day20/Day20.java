@@ -19,7 +19,7 @@ import com.carniware.aoc.common.Helper;
 @Order(20)
 public class Day20 extends AoCDayAbstract {
     public Day20() {
-        this("src/main/java/com/carniware/aoc/day20/input.txt");
+        this("src/main/java/com/carniware/aoc/day20/sample.txt");
     }
 
     public Day20(String filename) {
@@ -146,7 +146,6 @@ public class Day20 extends AoCDayAbstract {
                 if (modulesToWatch.contains(pulse.sender().name)) {
                     if (pulse.state().equals(PulseState.HIGH)) {
                         if (!cycles.containsKey(pulse.sender().name)) {
-                            System.out.println(String.format("Found minimum for %s (%d)", pulse.sender().name, i));
                             cycles.put(pulse.sender().name, i);
                         }
                     }

@@ -40,8 +40,6 @@ public abstract class Module {
     }
 
     public PulseState handlePulse(Pulse pulse) {
-        // System.out.println(
-        //         String.format("%s -%s-> %s", pulse.sender(), pulse.state().toString().toLowerCase(), pulse.receiver()));
         return pulse.state();
     }
 
@@ -112,8 +110,6 @@ class ConjunctionModule extends Module {
         this.inputModules = new HashMap<>();
         inputModules.forEach(x -> this.inputModules.put(x, PulseState.LOW));
     }
-
-    
 
     @Override
     public PulseState handlePulse(Pulse pulse) {
