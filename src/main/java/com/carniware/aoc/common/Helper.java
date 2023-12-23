@@ -16,6 +16,9 @@ public class Helper {
 		int y();
 	}
 
+	public record Point<T>(T x, T y) {
+	}
+
 	public record Point2l(long x, long y) {
 	}
 
@@ -48,6 +51,34 @@ public class Helper {
 		}
 
 		return true;
+	}
+
+	public static Boolean withinBounds(Point2l p, long x, long y) {
+		return withinBounds(p, 0, 0, x, y);
+	}
+
+	public static Boolean withinBounds(Point2l p, long x1, long y1, long x2, long y2) {
+		if (p.x() < x1 || p.x() >= x2 || p.y() < y1 || p.y() >= y2) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public static List<Point2> getNeighbours(Point2 point) {
+		return CardinalDirection.pointTranslations
+				.values()
+				.stream()
+				.map(x -> addPoints(x, point))
+				.toList();
+	}
+
+	public static List<Point2l> getNeighbours(Point2l point) {
+		return CardinalDirection.pointTranslations
+				.values()
+				.stream()
+				.map(x -> addPoints(x, point))
+				.toList();
 	}
 
 	public static long getManhattanDistance(Point2 p1, Point2 p2) {
@@ -170,18 +201,29 @@ public class Helper {
 	}
 
 	public static long lcm(long first, long second) {
-        if (first == 0 || second == 0) {
-            return 0;
-        }
+		if (first == 0 || second == 0) {
+			return 0;
+		}
 
-        var highest = Math.max(Math.abs(first), Math.abs(second));
-        var smallest = Math.min(Math.abs(first), Math.abs(second));
-        var lcm = highest;
+		var highest = Math.max(Math.abs(first), Math.abs(second));
+		var smallest = Math.min(Math.abs(first), Math.abs(second));
+		var lcm = highest;
 
-        while (lcm % smallest != 0) {
-            lcm += highest;
-        }
+		while (lcm % smallest != 0) {
+			lcm += highest;
+		}
 
-        return lcm;
-    }
+		return lcm;
+	}
+
+	public static char[][] load2dGrid(List<String> input) {
+		char[][] grid = new char[input.size()][input.getFirst().length()];
+		for (var y = 0; y < input.size(); ++y) {
+			for (var x = 0; x < input.getFirst().length(); ++x) {
+				grid[y][x] = input.get(y).charAt(x);
+			}
+		}
+
+		return grid;
+	}
 }
